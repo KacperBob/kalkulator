@@ -1,7 +1,12 @@
 import java.util.Scanner;
+import java.util.Locale;
 
 interface Kalkulator {
     void wykonajObliczenia();
+}
+
+enum Odpowiedzi {
+    TAK, NIE
 }
 
 public class SzansaNaWylysienie implements Kalkulator {
@@ -27,37 +32,79 @@ public class SzansaNaWylysienie implements Kalkulator {
     public void wykonajObliczenia() {
         Scanner skaner = new Scanner(System.in);
         System.out.println("Witaj w kalkulatorze szans na wyłysienie!");
+
         System.out.println("Podaj swój wiek: ");
-        int wiek = Integer.parseInt(skaner.nextLine());
+        while (!skaner.hasNextInt()) {
+            System.out.println("To nie jest poprawny wiek. Wprowadź wiek jako liczbę:");
+            skaner.next();
+        }
+        int wiek = skaner.nextInt();
+        skaner.nextLine();  // clear the buffer
         setWiek(wiek);
-        System.out.println("Czy pijesz Alkohol?: ");
-        String alko = skaner.nextLine();
-        System.out.println("Czy pijesz kawe?: ");
-        String kawa = skaner.nextLine();
-        System.out.println("Czy twoi krewni lysieja w przedwczesnym wieku?:");
-        String krewni = skaner.nextLine();
+        System.out.println("Czy pijesz Alkohol? (tak/nie): ");
+        Odpowiedzi alko = getOdpowiedz(skaner);
+        System.out.println("Czy pijesz kawe? (tak/nie): ");
+        Odpowiedzi kawa = getOdpowiedz(skaner);
+        System.out.println("Czy twoi krewni lysieja w przedwczesnym wieku? (tak/nie):");
+        Odpowiedzi krewni = getOdpowiedz(skaner);
+        System.out.println("Czy często odczuwasz stres? (tak/nie): ");
+        Odpowiedzi stres = getOdpowiedz(skaner);
+        System.out.println("Czy utrzymujesz zdrową dietę? (tak/nie): ");
+        Odpowiedzi dieta = getOdpowiedz(skaner);
+        System.out.println("Czy regularnie uprawiasz sport? (tak/nie): ");
+        Odpowiedzi sport = getOdpowiedz(skaner);
+        System.out.println("Czy palisz? (tak/nie): ");
+        Odpowiedzi palenie = getOdpowiedz(skaner);
+        System.out.println("Czy regularnie się wysypiasz? (tak/nie): ");
+        Odpowiedzi sen = getOdpowiedz(skaner);
+        System.out.println("Czy przyjmujesz jakieś leki? (tak/nie): ");
+        Odpowiedzi leki = getOdpowiedz(skaner);
+        System.out.println("Czy pracujesz w stresującym środowisku? (tak/nie): ");
+        Odpowiedzi praca = getOdpowiedz(skaner);
+
         int szanse = 0;
         szanse += oblicz(alko);
         szanse += oblicz(kawa);
         szanse += oblicz(krewni);
-
+        szanse += oblicz(stres);
+        szanse += oblicz(dieta, true);
+        szanse += oblicz(sport, true);
+        szanse += oblicz(palenie);
+        szanse += oblicz(sen, true);
+        szanse += oblicz(leki);
+        szanse += oblicz(praca);
         szanse += oblicz(getWiek(), alko);
 
-        if (szanse >=3)
-        System.out.println("twoje szanse na wyłysienie są duże, ale to nie znaczy, że muszisz wyłysieć. Zastanów się nad swoją dietą i stylem życia żeby do tego nie doprowadzić");
-        else
-            System.out.println("twoje szanse na wyłysienie są adekwatne do wieku i nie masz czym się martwić.");
+        String wynik;
+        if (szanse >= 6) {
+            wynik = "Twoje szanse na wyłysienie są duże, ale to nie znaczy, że musisz wyłysieć. Zastanów się nad swoją dietą i stylem życia, żeby do tego nie doprowadzić.";
+        } else {
+            wynik = "Twoje szanse na wyłysienie są adekwatne do wieku i nie masz czym się martwić.";
+        }
+
+        System.out.println(wynik);
     }
 
-    private int oblicz(String odpowiedz) {
-        switch (odpowiedz.toLowerCase()) {
-            case "tak":
-                return 1;
-            case "nie":
-                return 0;
-            default:
-                System.out.println("Nieznana odpowiedź, zakładam, że nie.");
-                return 0;
+    private Odpowiedzi getOdpowiedz(Scanner skaner) {
+        String odpowiedz;
+        do {
+            odpowiedz = skaner.nextLine().trim().toUpperCase(Locale.ROOT);
+            if (!(odpowiedz.equals("TAK") || odpowiedz.equals("NIE"))) {
+                System.out.println("Niepoprawna odpowiedź. Wprowadź 'tak' lub 'nie':");
+            }
+        } while (!(odpowiedz.equals("TAK") || odpowiedz.equals("NIE")));
+        return Odpowiedzi.valueOf(odpowiedz);
+    }
+
+    private int oblicz(Odpowiedzi odpowiedz) {
+        return oblicz(odpowiedz, false);
+    }
+
+    private int oblicz(Odpowiedzi odpowiedz, boolean odwroc) {
+        if (odwroc) {
+            return (odpowiedz == Odpowiedzi.TAK) ? 0 : 1;
+        } else {
+            return (odpowiedz == Odpowiedzi.TAK) ? 1 : 0;
         }
     }
 
@@ -71,7 +118,7 @@ public class SzansaNaWylysienie implements Kalkulator {
         }
     }
 
-    private int oblicz(int wiek, String odpowiedz) {
+    private int oblicz(int wiek, Odpowiedzi odpowiedz) {
         int wynik = oblicz(wiek);
         wynik += oblicz(odpowiedz);
         return wynik;
