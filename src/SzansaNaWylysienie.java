@@ -33,47 +33,21 @@ public class SzansaNaWylysienie implements Kalkulator {
         Scanner skaner = new Scanner(System.in);
         System.out.println("Witaj w kalkulatorze szans na wyłysienie!");
 
-        System.out.println("Podaj swój wiek: ");
-        while (!skaner.hasNextInt()) {
-            System.out.println("To nie jest poprawny wiek. Wprowadź wiek jako liczbę:");
-            skaner.next();
-        }
-        int wiek = skaner.nextInt();
-        skaner.nextLine();  // clear the buffer
+        int wiek = pobierzWiekOdUzytkownika(skaner);
         setWiek(wiek);
-        System.out.println("Czy pijesz Alkohol? (tak/nie): ");
-        Odpowiedzi alko = getOdpowiedz(skaner);
-        System.out.println("Czy pijesz kawe? (tak/nie): ");
-        Odpowiedzi kawa = getOdpowiedz(skaner);
-        System.out.println("Czy twoi krewni lysieja w przedwczesnym wieku? (tak/nie):");
-        Odpowiedzi krewni = getOdpowiedz(skaner);
-        System.out.println("Czy często odczuwasz stres? (tak/nie): ");
-        Odpowiedzi stres = getOdpowiedz(skaner);
-        System.out.println("Czy utrzymujesz zdrową dietę? (tak/nie): ");
-        Odpowiedzi dieta = getOdpowiedz(skaner);
-        System.out.println("Czy regularnie uprawiasz sport? (tak/nie): ");
-        Odpowiedzi sport = getOdpowiedz(skaner);
-        System.out.println("Czy palisz? (tak/nie): ");
-        Odpowiedzi palenie = getOdpowiedz(skaner);
-        System.out.println("Czy regularnie się wysypiasz? (tak/nie): ");
-        Odpowiedzi sen = getOdpowiedz(skaner);
-        System.out.println("Czy przyjmujesz jakieś leki? (tak/nie): ");
-        Odpowiedzi leki = getOdpowiedz(skaner);
-        System.out.println("Czy pracujesz w stresującym środowisku? (tak/nie): ");
-        Odpowiedzi praca = getOdpowiedz(skaner);
 
         int szanse = 0;
-        szanse += oblicz(alko);
-        szanse += oblicz(kawa);
-        szanse += oblicz(krewni);
-        szanse += oblicz(stres);
-        szanse += oblicz(dieta, true);
-        szanse += oblicz(sport, true);
-        szanse += oblicz(palenie);
-        szanse += oblicz(sen, true);
-        szanse += oblicz(leki);
-        szanse += oblicz(praca);
-        szanse += oblicz(getWiek(), alko);
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy pijesz Alkohol? (tak/nie): "));
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy pijesz kawe? (tak/nie): "));
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy twoi krewni lysieja w przedwczesnym wieku? (tak/nie):"));
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy często odczuwasz stres? (tak/nie): "));
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy utrzymujesz zdrową dietę? (tak/nie): "), true);
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy regularnie uprawiasz sport? (tak/nie): "), true);
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy palisz? (tak/nie): "));
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy regularnie się wysypiasz? (tak/nie): "), true);
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy przyjmujesz jakieś leki? (tak/nie): "));
+        szanse += przeliczSzanse(pobierzOdp(skaner, "Czy pracujesz w stresującym środowisku? (tak/nie): "));
+        szanse += przeliczSzanse(getWiek());
 
         String wynik;
         if (szanse >= 6) {
@@ -85,7 +59,19 @@ public class SzansaNaWylysienie implements Kalkulator {
         System.out.println(wynik);
     }
 
-    private Odpowiedzi getOdpowiedz(Scanner skaner) {
+    private int pobierzWiekOdUzytkownika(Scanner skaner) {
+        System.out.println("Podaj swój wiek: ");
+        while (!skaner.hasNextInt()) {
+            System.out.println("To nie jest poprawny wiek. Wprowadź wiek jako liczbę:");
+            skaner.next();
+        }
+        int wiek = skaner.nextInt();
+        skaner.nextLine();
+        return wiek;
+    }
+
+    private Odpowiedzi pobierzOdp(Scanner skaner, String pytanie) {
+        System.out.println(pytanie);
         String odpowiedz;
         do {
             odpowiedz = skaner.nextLine().trim().toUpperCase(Locale.ROOT);
@@ -96,11 +82,11 @@ public class SzansaNaWylysienie implements Kalkulator {
         return Odpowiedzi.valueOf(odpowiedz);
     }
 
-    private int oblicz(Odpowiedzi odpowiedz) {
-        return oblicz(odpowiedz, false);
+    private int przeliczSzanse(Odpowiedzi odpowiedz) {
+        return przeliczSzanse(odpowiedz, false);
     }
 
-    private int oblicz(Odpowiedzi odpowiedz, boolean odwroc) {
+    private int przeliczSzanse(Odpowiedzi odpowiedz, boolean odwroc) {
         if (odwroc) {
             return (odpowiedz == Odpowiedzi.TAK) ? 0 : 1;
         } else {
@@ -108,7 +94,7 @@ public class SzansaNaWylysienie implements Kalkulator {
         }
     }
 
-    private int oblicz(int wiek) {
+    private int przeliczSzanse(int wiek) {
         if (wiek >= 50) {
             return 2;
         } else if (wiek >= 30) {
@@ -116,11 +102,5 @@ public class SzansaNaWylysienie implements Kalkulator {
         } else {
             return 0;
         }
-    }
-
-    private int oblicz(int wiek, Odpowiedzi odpowiedz) {
-        int wynik = oblicz(wiek);
-        wynik += oblicz(odpowiedz);
-        return wynik;
     }
 }
