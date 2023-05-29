@@ -1,16 +1,28 @@
 import java.util.Scanner;
 import java.util.Locale;
 
-interface Kalkulator {
-    void wykonajObliczenia();
+abstract class AbstractKalkulator implements Kalkulator {
+    private final String nazwaKalkulatora;
+
+    public AbstractKalkulator(String nazwaKalkulatora) {
+        this.nazwaKalkulatora = nazwaKalkulatora;
+    }
+
+    public String getNazwaKalkulatora() {
+        return nazwaKalkulatora;
+    }
 }
 
 enum Odpowiedzi {
     TAK, NIE
 }
 
-public class SzansaNaWylysienie implements Kalkulator {
+public class SzansaNaWylysienie extends AbstractKalkulator {
     private int wiek;
+
+    public SzansaNaWylysienie(String nazwaKalkulatora) {
+        super(nazwaKalkulatora);
+    }
 
     public int getWiek() {
         return wiek;
@@ -24,14 +36,14 @@ public class SzansaNaWylysienie implements Kalkulator {
     }
 
     public static void main(String[] args) {
-        Kalkulator kalkulator = new SzansaNaWylysienie();
+        Kalkulator kalkulator = new SzansaNaWylysienie("Kalkulator Szansy na Wyłysienie");
         kalkulator.wykonajObliczenia();
     }
 
     @Override
     public void wykonajObliczenia() {
         Scanner skaner = new Scanner(System.in);
-        System.out.println("Witaj w kalkulatorze szans na wyłysienie!");
+        System.out.println("Witaj w " + getNazwaKalkulatora() + "!");
 
         int wiek = pobierzWiekOdUzytkownika(skaner);
         setWiek(wiek);
