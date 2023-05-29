@@ -1,17 +1,6 @@
 import java.util.Scanner;
 import java.util.Locale;
 
-abstract class AbstractKalkulator implements Kalkulator {
-    private final String nazwaKalkulatora;
-
-    public AbstractKalkulator(String nazwaKalkulatora) {
-        this.nazwaKalkulatora = nazwaKalkulatora;
-    }
-
-    public String getNazwaKalkulatora() {
-        return nazwaKalkulatora;
-    }
-}
 
 enum Odpowiedzi {
     TAK, NIE
